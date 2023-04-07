@@ -1,61 +1,44 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <map>
 using namespace std;
+
 
 int main() {
 	// your code goes here
 	int t=0;
 	cin>>t;
-	
 	while(t--){
-		int N=0;	
-		
+		int N=0;
 		cin>>N;
-		vector<int> v;
-		vector<char> c;
-		char s[2+1][100+1];
-		int res=0;
-		
-		// cout<<N<<"\n";
-		
-		for(int i=0;i<2;++i){
-			for(int j=0;j<N;++j){
-				cin>>s[i][j];
-			}
+		vector<long long> A;
+		for(int i=0;i<N;++i){
+			long long a=0;
+			cin>>a;
+			A.push_back(a);
 		}
-		if(N==1){
-			if(s[0][0]=='0'){
-				cout<<0<<"\n";
+		long long sum=0;
+		long long target=A[N-1];
+		long long cnt=0;
+		
+		for(int i=N-2;i>=0;--i){
+			if(A[i]<=target){
+				++cnt;
+				sum-=A[i];
 			}else{
-				cout<<1<<"\n";
-			}
-		}else{
-			for(int i=0;i<N;++i){
-				int curNum=s[0][i]-'0';
-				if(i==0){
-					if(s[0][i]-'0'>0 && s[0][i+1]-'0'>0){
-						--s[0][i];
-						--s[0][i+1];
-						++res;
-					}
-				}else if(i==N-1){
-					if(s[0][i]-'0'>0 && s[0][i-1]-'0'>0){
-						--s[0][i];
-						--s[0][i-1];
-						++res;
-					}
-				}else{
-					if(s[0][i-1]-'0'>0 && s[0][i]-'0'>0 && s[0][i+1]-'0'>0){
-						--s[0][i-1];
-						--s[0][i];
-						--s[0][i+1];
-						++res;
-					}
-				}
+				sum+=(target*cnt);
+				target=A[i];
+				cnt=0;
 			}
 		}
-		
-		cout<<res<<"\n";
+		if(cnt!=0){
+			sum+=(target * cnt);
+		}
+		if(sum<0){
+			sum=0;
+		}
+		cout<<sum<<endl;
 	}
 	return 0;
 }

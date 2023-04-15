@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <vector>
 #include <queue>
+#include <map>
 #include <math.h>
 using namespace std;
 
@@ -77,50 +78,63 @@ void solve(){
 			c[i]=nx;
 			
 		}	
-		vector<pair<int,int>> v;
-		vector<pair<pair<int,int>,int>> tmp;
+		
+		// vector<pair<pair<int,int>,int>> tmp;
 		bool visited[MAX][MAX]={0,};
 		for(int i=1;i<=N;++i){
 			for(int j=1;j<=N;++j){
 				visited[i][j]=0;
 			}
 		}
+		
 		for(int i=0;i<cur_size;++i){
 			if(flag[i]==0) continue;
 			++check[r[i]][c[i]];
-			if(check[r[i]][c[i]]==2 && visited[r[i]][c[i]]==0){
-				visited[r[i]][c[i]]=1;
-				v.push_back({r[i],c[i]});
-			}
+		}
+		map<pair<int,int>,int> MAP;
+		vector<pair<pair<int,int>,int>> tmp;
+		for(int i=0;i<cur_size;++i){
+			if(flag[i]==0) continue;
 			if(check[r[i]][c[i]]>=2){
 				tmp.push_back({{r[i],c[i]},i});
+				MAP[{r[i],c[i]}]+=1;
 			}
 		}
-		int vs=v.size();
-		// cout<<"ge"<<vs<<endl;;
-		for(int i=0;i<vs;++i){
-			int y=v[i].first;
-			int x=v[i].second;
+		
+		// int vs=v.size();
+		// tmp에는 check[][]가 2이상인 값들의 좌표와 인덱스 값 있음
+		
+		int ts=tmp.size();
+		
+		for(int i=0;i<ts;++i){
+			int y=tmp[i].first.first;
+			int x=tmp[i].first.second;
+			int idx=tmp[i].second;
+			// cout<<idx<<endl;
 			int msum=0, ssum=0, fsum=0;
 			vector<int> dir;
-			for(int j=0;j<tmp.size();++j){
-				int cy=tmp[j].first.first;
-				int cx=tmp[j].first.second;
-				int cidx=tmp[j].second;
-				if( cy==y &&  cx== x){
-					
+			
+			flag[idx]=0;
+			
+			if(MAP[{y,x}]!=0){
+				for(int j=0;j<ts;++j){
+					int cy=tmp[j].first.first;
+					int cx=tmp[j].first.second;
+					int cidx=tmp[j].second;
+					if(cy==y && cx==x){
+						msum+=m[cidx];
+						ssum+=s[cidx];
+						dir.push_back(d[cidx]);
+					}
 				}
+				fsum=MAP[{y,x}];
+				MAP[{y,x}]=0;
+				
+				
+			}else{
+				continue;
 			}
-			// for(int j=0;j<cur_size;++j){
-			// 	if(r[j]==y && c[j]==x && flag[j]==1){
-			// 		flag[j]=0;
-			// 		--check[y][x];
-			// 		msum+=m[j];
-			// 		ssum+=s[j];
-			// 		++fsum;
-			// 		dir.push_back(d[j]);
-			// 	}
-			// }
+			
 			int curm=msum/5;
 			
 			int curs=ssum/fsum;

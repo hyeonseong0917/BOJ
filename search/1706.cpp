@@ -8,7 +8,7 @@ using namespace std;
 string board[20+1];
 vector<string> res;
 map<string,int> m;
-int R,C;
+int R,C=0;
 void Input(){
 	cin>>R>>C;
 	for(int i=0;i<R;++i){

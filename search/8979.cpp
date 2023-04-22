@@ -28,14 +28,22 @@ int main() {
 	map<pair<pair<int,int>,int>,int> m;
 	int rank[1000+1]={0,};
 	for(int i=0;i<N;++i){
-		if(m[{{v[i].first.second,v[i].second.first},v[i].second.second}]==0){
+		pair<pair<int,int>,int> p={{v[i].first.second,v[i].second.first},v[i].second.second};
+		if(m[p]==0){
 			++cnt;
-			rank[v[i].first.first]=cnt;
-			m[{{v[i].first.second,v[i].second.first},v[i].second.second}]=1;
-		}else{
-			rank[v[i].first.first]=cnt;
+			int cur_cnt=cnt;
+			rank[v[i].first.first]=cur_cnt;
+			for(int j=0;j<N;++j){
+				if(i!=j){
+					pair<pair<int,int>,int> q={{v[j].first.second,v[j].second.first},v[j].second.second};
+					if(p==q){
+						m[p]=1;
+						rank[v[j].first.first]=cur_cnt;
+						++cnt;
+					}
+				}
+			}
 		}
-		
 	}
 	cout<<rank[K];
 	return 0;

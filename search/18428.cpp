@@ -79,7 +79,5 @@
 		// your code goes here
 		Input();
 		solve();
-		
-		// cout<<board[0][1];
 		return 0;
 	}

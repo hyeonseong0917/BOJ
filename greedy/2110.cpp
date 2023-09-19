@@ -18,7 +18,6 @@ void Input(){
 	sort(x.begin(),x.end());
 }	
 void solve(){
-	
 	int L=1;
 	int R=x[x.size()-1]-x[0];
 	int cnt=1;

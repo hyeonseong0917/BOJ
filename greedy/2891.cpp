@@ -1,63 +1,58 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <map>
 using namespace std;
-
-int N,S,R;
-bool visited[10+1];
-void Input(){
-	cin>>N>>S>>R;
-	for(int i=1;i<=N;++i){
-		visited[i]=1;
-	}
-	vector<int> a;
-	vector<int> broken;
-	for(int i=0;i<S;++i){
-		int c=0;
-		cin>>c;
-		// a.push_back(c);
-		broken.push_back(c);
-		
-	}
-	for(int i=0;i<R;++i){
-		int c=0;
-		cin>>c;
-		visited[c]=1;
-		a.push_back(c);
-	}
-	for(int i=0;i<S;++i){
-		visited[broken[i]]=0;
-	}
-	sort(a.begin(),a.end());
-	for(int i=0;i<a.size();++i){
-		int curNum=a[i];
-		bool flag=visited[curNum];
-		visited[curNum]=1;
-		if(flag==1){
-			if(!visited[curNum-1] && curNum-1>=1){
-				visited[curNum-1]=1;
-				continue;
-			}
-			if(!visited[curNum+1] && curNum+1<=N){
-				visited[curNum+1]=1;
-				continue;
-			}	
-		}
-		
-		
-	}
-	int cnt=0;
-	for(int i=1;i<=N;++i){
-		if(!visited[i]){
-			++cnt;
-		}
-	}
-	cout<<cnt;
-	
-}
 
 int main() {
 	// your code goes here
-	Input();
+	int N,S,R;
+	cin>>N>>S>>R;
+	map<int,int> damaged; //손상된 팀의 번호
+	map<int,int> rest; //여분 가져온 팀의 번호
+	for(int i=0;i<S;++i){
+		int a=0;
+		cin>>a;
+		// damaged.push_back(a);
+		damaged[a]=1;
+	}
+	for(int i=0;i<R;++i){
+		int a=0;
+		cin>>a;
+		// rest.push_back(a);
+		rest[a]=1;
+	}
+	for(int i=1;i<=N;++i){
+		if(rest[i] && damaged[i]){
+			rest[i]=0;
+			damaged[i]=0;
+		}
+	}
+	int cnt=0; //출발이 가능한 팀
+	for(int i=1;i<=N;++i){
+		if(damaged[i]){
+			bool flag=0;
+			if(i-1>=1){
+				if(rest[i-1]){
+					rest[i-1]=0;
+					flag=1;
+				}
+			}
+			if(flag==0){
+				if(i+1<=N){
+					if(rest[i+1]){
+						rest[i+1]=0;
+						flag=1;
+					}
+				}
+			}
+			if(flag==0){
+				++cnt;
+			}
+		}
+	}
+	cout<<cnt;
+	// 
+	// 최소의 팀이 출발하지 못해야함=최대한 많이 출발해야함
 	return 0;
 }

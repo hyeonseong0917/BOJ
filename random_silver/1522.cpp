@@ -13,10 +13,27 @@ int main() {
 	cin.tie(NULL); 
 	cout.tie(NULL);
 	string s;
-	int ans=0;
 	cin>>s;	
-	// a를 모두 연속하게 바꾸는 데 필요한 최소 횟수
-	// 1. b 사이의 거리가 가장 먼 구간을 찾는다 X
-	// 2. 
+	int a_num=0;
+	for(int i=0;i<s.size();++i){
+		if(s[i]=='a'){
+			++a_num;
+		}
+	}
+	int ans=122232421;
+	for(int i=0;i<s.size();++i){
+		string cur_str="";
+		int cur_cnt=0;
+		for(int j=0;j<a_num;++j){
+			cur_str+=s[(i+j)%s.size()];
+		}
+		for(int j=0;j<a_num;++j){
+			if(cur_str[j]=='b'){
+				++cur_cnt;
+			}
+		}
+		ans=min(ans,cur_cnt);
+	}
+	cout<<ans;
 	return 0;
 }

@@ -9,6 +9,11 @@ using namespace std;
 
 
 vector<int> v; //v[i]=k, 
+// 123
+// 321
+// 312
+// 213
+// 231
 int main() {
 	ios_base :: sync_with_stdio(false); 
 	cin.tie(NULL); 
@@ -27,6 +32,12 @@ int main() {
 		v[x]=v[y];
 		v[y]=tmp;
 	}
-	cout<<v[0]+1;
+	for(int i=0;i<3;++i){
+		if(v[i]==1){
+			cout<<i+1;
+			break;
+		}
+	}
+	
 	return 0;
 }

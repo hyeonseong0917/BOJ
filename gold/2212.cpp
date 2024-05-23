@@ -27,7 +27,6 @@ void Input(){
 		dist[i]=1222232421;
 	}
 }
-vector<int> g[MAX];
 
 void dijkstra(int start_num){
 	dist[start_num]=0;
@@ -45,11 +44,7 @@ void dijkstra(int start_num){
 				parent[next_num]=cur_num;
 				dist[next_num]=cur_dist+next_dist;
 				pq.push({-1*dist[next_num],next_num});
-				g[next_num].clear();
-				for(int j=0;j<g[cur_num].size();++j){
-					g[next_num].push_back(g[cur_num][j]);
-				}
-				g[next_num].push_back(next_num);
+				
 			}
 		}
 	}
@@ -62,27 +57,6 @@ void solve(){
 	for(int i=2;i<=N;++i){
 		cout<<parent[i]<<" "<<i<<"\n";
 	}
-	// cout<<g[4][0]<<" "<<g[4][1]<<g[4][2];
-	// int ans=0;
-	// vector<pair<int,int>> p;
-	// for(int i=2;i<=N;++i){
-	// 	// cout<<i<<" "<<g[i].size()<<endl;
-	// 	for(int j=0;j<g[i].size()-1;++j){
-	// 		if(i==g[i][j]) continue;
-	// 		int next_num=g[i][j];
-	// 		if(!visited[g[i][j]][g[i][j+1]]){
-	// 			// cout<<i<<" "<<next_num<<"\n";
-	// 			visited[i][next_num]=1;
-	// 			visited[next_num][i]=1;
-	// 			p.push_back({g[i][j],g[i][j+1]});
-	// 			++ans;
-	// 		}
-	// 	}
-	// }
-	// cout<<ans<<"\n";
-	// for(int i=0;i<p.size();++i){
-	// 	cout<<p[i].first<<" "<<p[i].second<<"\n";
-	// }
 }
 
 int main() {

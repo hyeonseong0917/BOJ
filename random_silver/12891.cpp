@@ -36,7 +36,7 @@ int main() {
 		mapping['G']=2;
 		mapping['T']=3;
 		while(L<=R && R<n){
-			if(v[0]==a && v[1]==c && v[2]==g && v[3]==t){
+			if(v[0]>=a && v[1]>=c && v[2]>=g && v[3]>=t){
 				++ans;
 			}
 			if(R+1<n){

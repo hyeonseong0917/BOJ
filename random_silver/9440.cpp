@@ -28,7 +28,7 @@ int main() {
 		if(R!=-1){
 			ll k=R;
 			ll cnt=0;
-			while(R<n && L<k && cnt<2){
+			while(R<n && cnt<2){
 				ll tmp=v[L];
 				v[L]=v[R];
 				v[R]=tmp;

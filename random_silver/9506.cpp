@@ -31,6 +31,7 @@ int main() {
 			sum+=tmp[i];
 		}
 		// cout<<n<<" "<<sum<<endl;
+		
 		if(sum==n){
 			cout<<n<<" = ";
 			for(ll i=0;i<tmp.size();++i){

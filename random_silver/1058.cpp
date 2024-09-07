@@ -44,6 +44,7 @@ int main() {
 				if(is_same) ++dp[i];
 			}
 		}
+		
 		ll ans=0;
 		for(ll i=0;i<n;++i){
 			ans=max(ans,dp[i]);

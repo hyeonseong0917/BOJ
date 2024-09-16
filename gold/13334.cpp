@@ -41,9 +41,6 @@ int main() {
 		}
 		sort(tmp.begin(),tmp.end());
 		sort(v.begin(),v.end(),comp);
-		// for(ll i=0;i<n;++i){
-		// 	cout<<v[i].first<<" "<<v[i].second<<"\n";
-		// }
 		cin>>d;
 		priority_queue<pair<ll,ll>> pq;
 		ll L=0;
@@ -51,14 +48,6 @@ int main() {
 		for(ll i=0;i<tmp.size();++i){
 			ll s=tmp[i];
 			ll f=tmp[i]+d;
-			while(!pq.empty()){
-				ll cur_start=pq.top().first*-1;
-				if(cur_start<s){
-					pq.pop();
-				}else{
-					break;
-				}
-			}
 			while(L<n){
 				if(v[L].second<=f){
 					pair<ll,ll> p=v[L];

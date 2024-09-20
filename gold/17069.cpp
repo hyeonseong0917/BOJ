@@ -15,33 +15,6 @@ ll n;
 bool isRange(ll y, ll x){
 	return (y>=0 && x>=0 && y<n && x<n);
 }
-ll get_dp(ll y, ll x, ll d){
-	if(!isRange(y,x)) return 0;
-	if(board[y][x]==1) return dp[y][x][d]=0;
-	if(d==1){
-		ll fy=y;
-		ll fx=x+1;
-
-		ll sy=y+1;
-		ll sx=x;
-		if(board[fy][fx] || board[sy][sx]){
-			return dp[y][x][d]=0;
-		}
-	}
-	if(y==0 && x==1){
-		if(d==0) return 0;
-		return 1;
-	} 
-	if(dp[y][x][d]) return dp[y][x][d];
-	if(d==0){
-		return dp[y][x][d]=get_dp(y-dy[0],x-dx[0],0)+get_dp(y-dy[1],x-dy[1],1);
-	}else if(d==1){
-		return dp[y][x][d]=get_dp(y-dy[0],x-dx[0],0)+get_dp(y-dy[1],x-dy[1],1)+get_dp(y-dy[2],x-dx[2],2);
-	}else{
-		return dp[y][x][d]=get_dp(y-dy[2],x-dx[2],2)+get_dp(y-dy[1],x-dy[1],1);
-	}
-}
-
 int main() {
 	ios_base :: sync_with_stdio(false); 
 	cin.tie(NULL); 
@@ -57,9 +30,49 @@ int main() {
 				}
 			}
 		}
-		ll sum=0;
-		sum+=get_dp(n-1,n-1,1);
-		cout<<sum;
+		if(!board[0][2]){
+			dp[0][2][2]=1;
+		}
+		if(!board[1][2] && !board[0][2] && !board[1][1]){
+			dp[1][2][1]=1;
+		}
+		
+		for(ll i=0;i<n;++i){
+			for(ll j=2;j<n;++j){
+				for(ll k=0;k<3;++k){
+					if(board[i][j]) continue;
+					if(k==0){
+						if(isRange(i-dy[0],j-dx[0]) && !board[i-dy[0]][j-dx[0]]){
+							dp[i][j][0]+=dp[i-dy[0]][j-dx[0]][0];
+						}
+						if(isRange(i-dy[0],j-dx[0]) && !board[i-dy[0]][j-dx[0]]){
+							dp[i][j][0]+=dp[i-dy[0]][j-dx[0]][1];
+						}
+					}else if(k==1){
+						if(board[i-1][j] || board[i][j-1] || board[i-1][j-1]){
+							continue;
+						}
+						if(isRange(i-dy[1],j-dx[1])){
+							dp[i][j][1]+=dp[i-dy[1]][j-dx[1]][0];
+						}
+						if(isRange(i-dy[1],j-dx[1])){
+							dp[i][j][1]+=dp[i-dy[1]][j-dx[1]][1];
+						}
+						if(isRange(i-dy[1],j-dx[1])){
+							dp[i][j][1]+=dp[i-dy[1]][j-dx[1]][2];
+						}
+					}else{
+						if(isRange(i-dy[2],j-dx[2]) && !board[i-dy[2]][j-dx[2]]){
+							dp[i][j][2]+=dp[i-dy[2]][j-dx[2]][2];
+						}
+						if(isRange(i-dy[2],j-dx[2]) && !board[i-dy[2]][j-dx[2]]){
+							dp[i][j][2]+=dp[i-dy[2]][j-dx[2]][1];
+						}
+					}
+				}
+			}
+		}
+		cout<<dp[n-1][n-1][0]+dp[n-1][n-1][1]+dp[n-1][n-1][2];
 	}
 	return 0;
 }

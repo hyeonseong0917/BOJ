@@ -7,72 +7,62 @@ using namespace std;
 
 #define ll long long
 
-ll dp[32+1][32+1][3+1];
-ll dy[3]={1,1,0};
-ll dx[3]={0,1,1};
-ll board[32+1][32+1];
-ll n;
-bool isRange(ll y, ll x){
-	return (y>=0 && x>=0 && y<n && x<n);
-}
+ll dp[1000+1][1000+1];
+
 int main() {
 	ios_base :: sync_with_stdio(false); 
 	cin.tie(NULL); 
 	cout.tie(NULL);
 	ll o=1;
 	while(o--){
-		cin>>n;
-		for(ll i=0;i<n;++i){
-			for(ll j=0;j<n;++j){
-				cin>>board[i][j];
-				for(ll k=0;k<4;++k){
-					dp[i][j][k]=0;
+		ll t;
+		cin>>t;
+		while(t--){
+			for(ll i=0;i<=1000;++i){
+				for(ll j=0;j<=1000;++j){
+					dp[i][j]=0;
 				}
 			}
-		}
-		if(!board[0][2]){
-			dp[0][2][2]=1;
-		}
-		if(!board[1][2] && !board[0][2] && !board[1][1]){
-			dp[1][2][1]=1;
-		}
-		
-		for(ll i=0;i<n;++i){
-			for(ll j=2;j<n;++j){
-				for(ll k=0;k<3;++k){
-					if(board[i][j]) continue;
-					if(k==0){
-						if(isRange(i-dy[0],j-dx[0]) && !board[i-dy[0]][j-dx[0]]){
-							dp[i][j][0]+=dp[i-dy[0]][j-dx[0]][0];
-						}
-						if(isRange(i-dy[0],j-dx[0]) && !board[i-dy[0]][j-dx[0]]){
-							dp[i][j][0]+=dp[i-dy[0]][j-dx[0]][1];
-						}
-					}else if(k==1){
-						if(board[i-1][j] || board[i][j-1] || board[i-1][j-1]){
-							continue;
-						}
-						if(isRange(i-dy[1],j-dx[1])){
-							dp[i][j][1]+=dp[i-dy[1]][j-dx[1]][0];
-						}
-						if(isRange(i-dy[1],j-dx[1])){
-							dp[i][j][1]+=dp[i-dy[1]][j-dx[1]][1];
-						}
-						if(isRange(i-dy[1],j-dx[1])){
-							dp[i][j][1]+=dp[i-dy[1]][j-dx[1]][2];
+			ll n;
+			cin>>n;
+			vector<ll> v(n,0);
+			for(ll i=0;i<n;++i){
+				cin>>v[i];
+			}
+			if(n==1){
+				cout<<v[0]<<"\n";
+				continue;
+			}
+			bool is_odd=0;
+			if(n%2==1){
+				is_odd=1;
+				for(ll i=0;i<n;++i){
+					dp[i][i]=v[i];
+				}
+			}
+			for(ll i=1;i<=n-1;++i){
+				for(ll j=0;j+i<=n-1;++j){
+					if(!is_odd){
+						if(i%2==1){
+							dp[j][j+i]=max(v[j]+dp[j+1][j+i],v[j+i]+dp[j][j+i-1]);
+						}else{
+							dp[j][j+i]=min(dp[j+1][j+i],dp[j][j+i-1]);
 						}
 					}else{
-						if(isRange(i-dy[2],j-dx[2]) && !board[i-dy[2]][j-dx[2]]){
-							dp[i][j][2]+=dp[i-dy[2]][j-dx[2]][2];
-						}
-						if(isRange(i-dy[2],j-dx[2]) && !board[i-dy[2]][j-dx[2]]){
-							dp[i][j][2]+=dp[i-dy[2]][j-dx[2]][1];
+						if(i%2==0){
+							dp[j][j+i]=max(v[j]+dp[j+1][j+i],v[j+i]+dp[j][j+i-1]);
+						}else{
+							dp[j][j+i]=min(dp[j+1][j+i],dp[j][j+i-1]);
 						}
 					}
+					
 				}
+				
 			}
+			cout<<dp[0][n-1]<<"\n";
+			
+			
 		}
-		cout<<dp[n-1][n-1][0]+dp[n-1][n-1][1]+dp[n-1][n-1][2];
 	}
 	return 0;
 }

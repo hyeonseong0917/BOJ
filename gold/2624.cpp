@@ -45,25 +45,14 @@ int main() {
 		}
 		for(ll i=1;i<=t;++i){
 			for(ll j=1;j<k;++j){
-				// if(i==9 && j==1){
-				// 	cout<<cnt[v[j]]<<endl;
-				// }
 				for(ll p=0;p<=cnt[j];++p){
 					if(i>=p*v[j]){
 						if(i==p*v[j]){
-							// if(i==9 && j==1){
-							// 	cout<<"fds"<<p<<" "<<dp[i][j]<<endl;
-							// }
-
 							++dp[i][j];
 							break;
 						}else{
 							// i>p*v[j]
 							dp[i][j]+=dp[i-p*v[j]][j-1];
-							// if(i==9 && j==1){
-							// 	cout<<"ff "<<p<<" "<<i-p*v[j]<<" "<<dp[i][j]<<endl;
-							// }
-							
 						}
 					}else{
 						break;
@@ -72,7 +61,6 @@ int main() {
 				}
 			}
 		}
-		// cout<<dp[9][1]<<endl;
 		cout<<dp[t][k-1];
 	}
 	return 0;

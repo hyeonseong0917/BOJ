@@ -25,33 +25,43 @@ int main() {
 		v.push_back({c,z});
 		ll ans=0;
 		for(ll i=0;i<3;++i){
-			if(v[i].first>=v[i].second){
-				ans+=v[i].second;
-				v[i].first-=v[i].second;
-				v[i].second=0;
+			ans+=min(v[i].second,v[i].first);
+			ll tmp=v[i].first;
+			v[i].first-=min(v[i].second,v[i].first);
+			v[i].second-=min(v[i].second,tmp);
+		}
+		// cout<<ans<<endl;
+		for(ll i=0;i<3;++i){
+			if(i==0){
+				ll fst_num=min(v[1].first, v[0].second/3);
+				ans+=fst_num;
+				v[1].first-=fst_num;
+				v[0].second-=fst_num*3;
+				ll sed_num=min(v[2].first, v[0].second/9);
+				ans+=sed_num;
+				v[2].first-=sed_num;
+				v[0].second-=sed_num*9;
+			}else if(i==1){
+				ll fst_num=min(v[2].first, v[1].second/3);
+				ans+=fst_num;
+				v[2].first-=fst_num;
+				v[1].second-=fst_num*3;
+				// cout<<v[1].second<<"\n";
+				ll sed_num=min(v[0].first, v[1].second/9);
+				ans+=sed_num;
+				v[0].first-=sed_num;
+				v[1].second-=sed_num*9;
+				// cout<<v[1].second<<endl;
 			}else{
-				ans+=v[i].first;
-				v[i].second-=v[i].first;
-				v[i].first=0;
+				ll fst_num=min(v[0].first, v[2].second/3);
+				ans+=fst_num;
+				v[0].first-=fst_num;
+				v[2].second-=fst_num*3;
+				ll sed_num=min(v[1].first, v[2].second/9);
+				ans+=sed_num;
+				v[1].first-=sed_num;
+				v[2].second-=sed_num*9;
 			}
-		}
-		if(v[0].second){
-			ans+=min(v[1].first,v[0].second/3);
-			v[0].second-=min(v[1].first,v[0].second/3)*3;
-			ans+=min(v[2].first,v[0].second/9);
-			v[0].second-=min(v[2].first,v[0].second/9)*9;
-		}
-		if(v[1].second){
-			ans+=min(v[2].first,v[1].second/3);
-			v[1].second-=min(v[2].first,v[1].second/3)*3;
-			ans+=min(v[0].first,v[1].second/9);
-			v[1].second-=min(v[0].first,v[1].second/9)*9;
-		}
-		if(v[2].second){
-			ans+=min(v[0].first,v[2].second/3);
-			v[2].second-=min(v[0].first,v[2].second/3)*3;
-			ans+=min(v[1].first,v[2].second/9);
-			v[2].second-=min(v[1].first,v[2].second/9)*9;
 		}
 		cout<<ans;
 	}

@@ -6,134 +6,123 @@ using namespace std;
 
 #define ll long long
 
-int N;
-string board[50+1];
-vector<pair<int,int>> mirror;
+const int MAX=50+1;
+string board[MAX];
+ll dist[MAX][MAX][4+1];
+ll INF=2023101800;
+ll dy[4]={-1,0,1,0};
+ll dx[4]={0,1,0,-1};
+ll n;
 
-int dy[4]={-1,0,1,0};
-int dx[4]={0,1,0,-1};
-bool mirror_check[2500+1];
-bool is_mirror[50+1][50+1];
-bool visited[50+1][50+1][4+1];
-bool isRange(int y, int x){
-	return (y>=0 && x>=0 && y<N && x<N);
+bool isRange(ll y, ll x){
+	return (y>=0 && x>=0 && y<n && x<n);
 }
-vector<int> tmp_mirror;
-int cy=-1,cx=-1,dir=-1,fy,fx;
-bool flag=0;
-void dfs(int y, int x, int d){
-	// cout<<y<<" "<<x<<" "<<d<<endl;
-	// cout<<is_mirror[y][x]<<endl;
-	if(y==fy && x==fx){
-		flag=1;
-		return;
-	}
-	if(flag) return;
-	int ny=y+dy[d];
-	int nx=x+dx[d];
-	if(!isRange(ny,nx) || board[ny][nx]=='*'){
-		return;
-	}
-	
-	if(is_mirror[ny][nx]){
-		if(!visited[ny][nx][(d+1)%4]){
-			visited[ny][nx][(d+1)%4]=1;
-			dfs(ny,nx,(d+1)%4);
-		}
-		if(!visited[ny][nx][(d+3)%4]){
-			visited[ny][nx][(d+3)%4]=1;
-			dfs(ny,nx,(d+3)%4);
-		}
+
+// /
+ll fst_turn(ll d){
+	if(d==0){
+		return 1;
+	}else if(d==1){
+		return 0;
+	}else if(d==2){
+		return 3;
 	}else{
-		if(!visited[ny][nx][d]){
-			visited[ny][nx][d]=1;
-			dfs(ny,nx,d);
-		}
+		return 2;
 	}
+	return 0;
+}
 
-}
-void mirror_install(int cur_num){
-	if(cur_num==0){
-		// 다 설치했음
-		// tmp_mirror에 번호가 들어가 있음
-		// tmp_mirror의 방향은 어떡할건지?
-		// 현재 방향에 대해 +1 or +3
-		for(int i=0;i<N;++i){
-			for(int j=0;j<N;++j){
-				is_mirror[i][j]=0;
-			}
-		}
-		if(!tmp_mirror.empty()){
-			for(int i=0;i<tmp_mirror.size();++i){
-				int y=mirror[tmp_mirror[i]].first;
-				int x=mirror[tmp_mirror[i]].second;
-				is_mirror[y][x]=1;
-			}	
-		}
-		
-		for(int i=0;i<4;++i){
-			if(!visited[cy][cx][i]){
-				visited[cy][cx][i]=1;
-				dfs(cy,cx,i);	
-			}
-			
-		}
-		return;
+// 
+ll sed_turn(ll d){
+	if(d==0){
+		return 3;
+	}else if(d==1){
+		return 2;
+	}else if(d==2){
+		return 1;
+	}else{
+		return 0;
 	}
-	for(int i=0;i<mirror.size();++i){
-		if(!mirror_check[i]){
-			mirror_check[i]=1;
-			tmp_mirror.push_back(i);
-			mirror_install(cur_num-1);
-			tmp_mirror.pop_back();
-			mirror_check[i]=0;
-		}
-	}
+	return 0;
 }
+
 int main() {
 	ios_base :: sync_with_stdio(false); 
 	cin.tie(NULL); 
 	cout.tie(NULL);
-	int t=1;
-	while(t--){
-		cin>>N;
-		int ans=-1;
-		for(int i=0;i<N;++i){
+	ll o=1;
+	while(o--){
+		
+		cin>>n;
+		for(ll i=0;i<n;++i){
+			for(ll j=0;j<n;++j){
+				for(ll k=0;k<4;++k){
+					dist[i][j][k]=INF;
+				}
+			}
+		}
+		vector<pair<ll,ll>> p;
+		for(ll i=0;i<n;++i){
 			cin>>board[i];
-			for(int j=0;j<N;++j){
-				if(board[i][j]=='!'){
-					mirror.push_back({i,j});
-				}
+			for(ll j=0;j<n;++j){
 				if(board[i][j]=='#'){
-					if(cy==-1){
-						cy=i;
-						cx=j;
-					}else{
-						fy=i;
-						fx=j;
-					}
+					p.push_back({i,j});
 				}
 			}
 		}
-		for(int i=0;i<=mirror.size();++i){
-			// i개만큼 거울을 설치
-			for(int j=0;j<mirror.size();++j){
-				mirror_check[j]=0;
+		ll cy=p[0].first;
+		ll cx=p[0].second;
+		ll fy=p[1].first;
+		ll fx=p[1].second;
+		dist[cy][cx][0]=0;
+		dist[cy][cx][1]=0;
+		dist[cy][cx][2]=0;
+		dist[cy][cx][3]=0;
+		queue<pair<pair<ll,ll>,ll>> q;
+		q.push({{cy,cx},0});
+		q.push({{cy,cx},1});
+		q.push({{cy,cx},2});
+		q.push({{cy,cx},3});
+		// dist[y][x]: y,x도달하기까지 필요한 거울의 최소 개수
+		ll ans=INF;
+		while(!q.empty()){
+			ll y=q.front().first.first;
+			ll x=q.front().first.second;
+			ll d=q.front().second;
+			q.pop();
+			if(y==fy && x==fx){
+				ans=min(ans,dist[y][x][d]);
+				continue;
 			}
-			tmp_mirror.clear();
-			for(int j=0;j<N;++j){
-				for(int k=0;k<N;++k){
-					for(int p=0;p<4;++p){
-						visited[j][k][p]=0;
-					}
+			ll ny=y+dy[d];
+			ll nx=x+dx[d];
+			if(!isRange(ny,nx)) continue;
+			if(board[ny][nx]=='*') continue;
+			if(board[ny][nx]=='.' || board[ny][nx]=='#'){
+				if(dist[ny][nx][d]>dist[y][x][d]){
+					q.push({{ny,nx},d});
+					dist[ny][nx][d]=dist[y][x][d];
+				}
+			}else if(board[ny][nx]=='!'){
+				// 방향 바꾸기
+				ll fd=fst_turn(d);
+				if(dist[ny][nx][fd]>dist[y][x][d]+1){
+					dist[ny][nx][fd]=dist[y][x][d]+1;
+					q.push({{ny,nx},fd});
+				}
+
+				ll sd=sed_turn(d);
+				if(dist[ny][nx][sd]>dist[y][x][d]+1){
+					dist[ny][nx][sd]=dist[y][x][d]+1;
+					q.push({{ny,nx},sd});
+				}
+				if(dist[ny][nx][d]>dist[y][x][d]){
+					dist[ny][nx][d]=dist[y][x][d];
+					q.push({{ny,nx},d});
 				}
 			}
-			mirror_install(i);
-			if(flag){
-				ans=i;
-				break;
-			}
 		}
+		// cout<<dist[3][1][2]<<"\n";
 		cout<<ans;
 	}
 

@@ -18,57 +18,35 @@ int main() {
 		string s;
 		cin>>s;
 		ll cnt=0;
-		while(s!=""){
-			// 다 0인지
-			// cout<<cnt<<" "<<s<<endl;
-			bool is_all_zero=1;
+		while(s.compare("")!=0){
+			ll idx=-1;
 			for(ll i=0;i<s.size();++i){
-				if(s[i]!='0'){
-					is_all_zero=0;
+				if(s[i]=='1'){
+					idx=i;
 					break;
 				}
 			}
-			if(is_all_zero) break;
-
-			// 1제거
-			string new_str="";
-			for(ll i=0;i<s.size();++i){
-				if(s[i]!='1'){
-					new_str+=s[i];
-				}else{
-					++cnt;
-				}
-			}
-			s=new_str;
-
-			// 앞에서 1인지?
-			if(s[0]=='1'){
-				++cnt;
-				ll last_idx=-1;
-				for(ll i=1;i<s.size();++i){
-					if(s[i]!='0'){
-						last_idx=i;
-						break;
+			if(idx!=-1){
+				string tmp="";
+				for(ll i=0;i<s.size();++i){
+					if(s[i]=='1'){
+						++cnt;
+					}else{
+						tmp+=s[i];
 					}
 				}
-				if(last_idx==-1){
-					break;
-				}else{
-					s=s.substr(last_idx);
-				}
+				s=tmp;
 			}else{
-				if(s[s.size()-1]=='1'){
-					++cnt;
-					s=s.substr(0,s.size()-1);
-				}else{
-					++cnt;
-					ll cur_num=stoll(s);
-					cur_num-=1;
-					s=to_string(cur_num);
+				ll cur_num=stoll(s);
+				if(cur_num==0){
+					break;
 				}
+				--cur_num;
+				s=to_string(cur_num);
+				++cnt;
 			}
 		}
-		cout<<cnt;	
+		cout<<cnt;
 	}
 	return 0;
 }

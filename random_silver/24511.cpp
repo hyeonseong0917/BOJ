@@ -18,22 +18,27 @@ int main() {
 		ll n;
 		cin>>n;
 		vector<ll> v(n,0);
-		deque<ll> dq[n+1];
+		deque<ll> dq;
 		for(ll i=0;i<n;++i){
 			cin>>v[i];
 		}
 		for(ll i=0;i<n;++i){
 			ll a;
 			cin>>a;
-			dq[i].push_back(a);
+			if(!v[i]) dq.push_front(a);
 		}
-		
 		ll m;
 		cin>>m;
-		vector<ll> ans;
 		for(ll i=0;i<m;++i){
 			ll a;
 			cin>>a;
+			if(!dq.empty()){
+				cout<<dq.front()<<" ";
+				dq.pop_front();
+				dq.push_back(a);
+			}else{
+				cout<<a<<" ";
+			}
 			
 		}
 

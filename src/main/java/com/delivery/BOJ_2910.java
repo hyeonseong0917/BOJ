@@ -1,18 +1,20 @@
 package com.delivery;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
-public class Main {
+public class BOJ_2910 {
     static StringBuilder sb=new StringBuilder();
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static int n,c;
     static ArrayList<Integer> arr=new ArrayList<>();
     static HashMap<Integer, Integer> m=new HashMap<>();
-    static ArrayList<Order> distArr=new ArrayList<>();
+    static ArrayList<Main.Order> distArr=new ArrayList<>();
     static class Pair{
         int value;
         int cnt;
@@ -31,8 +33,8 @@ public class Main {
             this.order=order;
         }
     }
-    static ArrayList<Pair> v=new ArrayList<>();
-    public static void main(String[] args) throws IOException{
+    static ArrayList<Main.Pair> v=new ArrayList<>();
+    public static void main(String[] args) throws IOException {
         Input();
         Solve();
     }
@@ -54,7 +56,7 @@ public class Main {
             if(m.containsKey(curNum)){
                 m.put(curNum,m.get(curNum)+1);
             }else{
-                distArr.add(new Order(curNum,i));
+                distArr.add(new Main.Order(curNum,i));
                 m.put(curNum,1);
             }
         }
@@ -62,9 +64,9 @@ public class Main {
             int curNum=distArr.get(i).value;
             int curOrder=distArr.get(i).order;
             int curCnt=m.get(curNum);
-            v.add(new Pair(curNum,curCnt,curOrder));
+            v.add(new Main.Pair(curNum,curCnt,curOrder));
         }
-        Collections.sort(v,new Comp());
+        Collections.sort(v,new Main.Comp());
         for(int i=0;i<v.size();++i){
             int curCnt=v.get(i).cnt;
             for(int j=0;j<curCnt;++j){
@@ -73,9 +75,9 @@ public class Main {
         }
         System.out.println(sb);
     }
-    static class Comp implements Comparator<Pair>{
+    static class Comp implements Comparator<Main.Pair> {
         @Override
-        public int compare(Pair a, Pair b){
+        public int compare(Main.Pair a, Main.Pair b){
             if(a.cnt==b.cnt){
                 return a.order-b.order;
             }

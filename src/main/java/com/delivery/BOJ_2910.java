@@ -14,7 +14,7 @@ public class BOJ_2910 {
     static int n,c;
     static ArrayList<Integer> arr=new ArrayList<>();
     static HashMap<Integer, Integer> m=new HashMap<>();
-    static ArrayList<Main.Order> distArr=new ArrayList<>();
+    static ArrayList<Order> distArr=new ArrayList<>();
     static class Pair{
         int value;
         int cnt;
@@ -33,7 +33,7 @@ public class BOJ_2910 {
             this.order=order;
         }
     }
-    static ArrayList<Main.Pair> v=new ArrayList<>();
+    static ArrayList<Pair> v=new ArrayList<>();
     public static void main(String[] args) throws IOException {
         Input();
         Solve();
@@ -56,7 +56,7 @@ public class BOJ_2910 {
             if(m.containsKey(curNum)){
                 m.put(curNum,m.get(curNum)+1);
             }else{
-                distArr.add(new Main.Order(curNum,i));
+                distArr.add(new Order(curNum,i));
                 m.put(curNum,1);
             }
         }
@@ -64,9 +64,9 @@ public class BOJ_2910 {
             int curNum=distArr.get(i).value;
             int curOrder=distArr.get(i).order;
             int curCnt=m.get(curNum);
-            v.add(new Main.Pair(curNum,curCnt,curOrder));
+            v.add(new Pair(curNum,curCnt,curOrder));
         }
-        Collections.sort(v,new Main.Comp());
+        Collections.sort(v,new Comp());
         for(int i=0;i<v.size();++i){
             int curCnt=v.get(i).cnt;
             for(int j=0;j<curCnt;++j){
@@ -75,9 +75,9 @@ public class BOJ_2910 {
         }
         System.out.println(sb);
     }
-    static class Comp implements Comparator<Main.Pair> {
+    static class Comp implements Comparator<Pair> {
         @Override
-        public int compare(Main.Pair a, Main.Pair b){
+        public int compare(Pair a, Pair b){
             if(a.cnt==b.cnt){
                 return a.order-b.order;
             }

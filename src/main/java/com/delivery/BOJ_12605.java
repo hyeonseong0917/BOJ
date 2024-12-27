@@ -1,16 +1,16 @@
 package com.delivery;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
-public class Main {
+public class BOJ_12605 {
     static StringBuilder sb=new StringBuilder();
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static int n;
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         Input();
         Solve();
     }
@@ -39,5 +39,4 @@ public class Main {
     static void Solve(){
 
     }
-
 }

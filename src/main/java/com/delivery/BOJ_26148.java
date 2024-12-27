@@ -1,16 +1,15 @@
 package com.delivery;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
 
-public class Main {
+public class BOJ_26148 {
     static StringBuilder sb=new StringBuilder();
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static int n,d;
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         Input();
         Solve();
     }
@@ -62,5 +61,4 @@ public class Main {
         }
         return false;
     }
-
 }

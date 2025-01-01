@@ -65,7 +65,7 @@ int main() {
 					rdp[i][j]=same_cnt;
 					continue;
 				}
-				ll fst_cnt=0, sed_cnt=0, trd_cnt=0;
+				ll fst_cnt=0, sed_cn                                                                                          t=0, trd_cnt=0;
 				if(i+1<=as-1 && j+1<=bs-1){
 					fst_cnt=rdp[i+1][j+1];
 				}else{

@@ -59,8 +59,6 @@ int main() {
 				}
 			}
 		}
-		// cout<<dp[1][1][2]<<endl;
-		// cout<<dp[2][0][0]<<endl;
 		ll ans=INF;
 		for(ll i=0;i<m;++i){
 			for(ll j=0;j<3;++j){

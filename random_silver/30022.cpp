@@ -37,7 +37,7 @@ int main() {
 		//p-q -2 5 0 -3 1
 		sort(v.begin(),v.end());
 		ll ans=0;
-		for(ll i=0;i<a;++i){
+		for(ll i=0;i<a;++i){ 
 			ll idx=v[i].second;
 			ans+=p[idx];
 		}

@@ -31,7 +31,7 @@ int main() {
 			a_sum+=c;
 		}
 		for(ll i=0;i<n;++i){
-			ll c;
+			ll c; 
 			cin>>c;
 			b_sum+=c;
 			b.push(c);

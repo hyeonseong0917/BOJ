@@ -9,15 +9,6 @@ using namespace std;
 
 #define ll long long
 
-const int MAX=1000+1;
-
-ll n,m;
-ll dy[4]={-1,0,1,0};
-ll dx[4]={0,1,0-1};
-bool isRange(ll y, ll x){
-	return (y>=1 && x>=1 && y<=n && x<=n);
-}
-
 int main() {
 	// your code goes here
 	ios_base :: sync_with_stdio(false); 
@@ -26,20 +17,54 @@ int main() {
 	int o=1;
 	// cin>>o;
 	while(o--){
-		
-		cin>>n>>m;
-		vector<ll> a(m,0),b(m,0);
-		for(ll i=0;i<m;++i){
-			cin>>a[i];
-			cin>>b[i];
+		ll n,A,B;
+		cin>>n>>A>>B;
+		vector<ll> v(n,0);
+		for(ll i=0;i<n;++i){
+			cin>>v[i];
 		}
-		sort(a.begin(),a.end());
-		sort(b.begin(),b.end());
-		ll x=a[m/2];
-		ll y=b[m/2];
+		sort(v.begin(),v.end());
 		ll ans=0;
-		for(ll i=0;i<m;++i){
-			ans+=abs(x-a[i])+abs(y-b[i]);
+		for(ll i=0;i<A;++i){
+			// i만큼 자는경우
+			ll C=A;
+			for(ll j=-1;j<n;++j){
+				// j번째 끝내고 자는경우
+				ll cur_time=0;
+				ll cnt=0;
+				C=A;
+				if(j==-1){
+					// 처음에 잠
+					cur_time+=i*B;
+					C-=i;
+					for(ll k=0;k<n;++k){
+						if(cur_time+C<=v[k]){
+							cur_time+=C;
+							++cnt;
+						}
+					}
+				}else{
+					// j번째 끝내고 잠을 잠.
+					// [0,j]까지는 기존의 C로 감
+					// 잠을 잠
+					// [j,n-1]까지는 조정된 C로감
+					for(ll k=0;k<=j;++k){
+						if(cur_time+C<=v[k]){
+							cur_time+=C;
+							++cnt;
+						}
+					}
+					C-=i;
+					cur_time+=i*B;
+					for(ll k=j+1;k<n;++k){
+						if(cur_time+C<=v[k]){
+							cur_time+=C;
+							++cnt;
+						}
+					}
+				}
+				ans=max(ans,cnt);
+			}
 		}
 		cout<<ans;
 	}

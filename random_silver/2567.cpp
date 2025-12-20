@@ -34,7 +34,6 @@ int main() {
             ll a,b;
             cin>>a>>b;
             // [b,a]에서 [b+10,a+10] 
-            // 테두리만
             for(ll j=b;j<b+10;++j){
                 for(ll k=a;k<a+10;++k){
                     ++check[j][k];

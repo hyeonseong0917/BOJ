@@ -26,10 +26,8 @@ int main() {
 		}
 		for(ll i=1;i*i<=32768;++i){
 			sq.push_back(i*i);
-			// dp[i*i][1]=1;
 		}
 		dp[0][0]=1;
-		// dp[n][m]+=dp[n-]
 		for(ll i=0;i<sq.size();++i){
 			ll cur_num=sq[i];
 			for(ll j=1;j<=4;++j){

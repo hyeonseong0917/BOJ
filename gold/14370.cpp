@@ -10,19 +10,6 @@ using namespace std;
 #define ll long long
 
 
-// three
-// seven
-// eight
-// nine
-// zero
-// four
-// five
-// six
-// one
-// two
-vector<string> v;
-
-// twonine
 int main() {
 	ios_base :: sync_with_stdio(false); 
 	cin.tie(NULL); 

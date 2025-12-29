@@ -18,29 +18,49 @@ int main() {
 	cout.tie(NULL);
 	ll o=1;
 	while(o--){
-        string s;
-        cin>>s;
-        ll n=s.size();
-        stack<char> st;
-        ll ans=0;
-        ll idx=0;
-        while(idx<n){
-            if(idx<n-1 && s[idx]=='(' && s[idx+1]==')'){
-                ll ss=st.size();
-                ans+=ss;
-                idx+=2;
-            }else{
-                if(s[idx]=='('){
-                    st.push(s[idx]);
+        ll t;
+        cin>>t;
+        while(t--){
+            string s;
+            cin>>s;
+            ll n=s.size();
+            stack<char> lst, rst;
+            string ans="";
+            for(ll i=0;i<n;++i){
+                if(s[i]=='<'){
+                    if(!lst.empty()){
+                        char l=lst.top();
+                        lst.pop();
+                        rst.push(l);
+                    }
+                }else if(s[i]=='>'){
+                    if(!rst.empty()){
+                        char r=rst.top();
+                        rst.pop();
+                        lst.push(r);
+                    }
+                }else if(s[i]=='-'){
+                    if(!lst.empty()){
+                        lst.pop();
+                    }
                 }else{
-                    st.pop();
-                    ++ans;
-                    // cout<<idx<<endl;
+                    lst.push(s[i]);
                 }
-                ++idx;
             }
+            while(!rst.empty()){
+                char r=rst.top();
+                rst.pop();
+                lst.push(r);
+            }
+
+            while(!lst.empty()){
+                char l=lst.top();
+                ans+=l;
+                lst.pop();
+            }
+            reverse(ans.begin(),ans.end());
+            cout<<ans<<"\n";
         }
-        cout<<ans;
 	} 
 	return 0;
 }

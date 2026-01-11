@@ -42,8 +42,11 @@ int main() {
             cin>>cur_num;
             // cur_num이 소수일지?
             while(!is_prime(cur_num)){
-            ++cur_num;
+               ++cur_num;
             }
+            if(cur_num==0){
+                cur_num=2;
+                }
             cout<<cur_num<<"\n";
         }
 	} 

@@ -70,9 +70,9 @@ void merge_sort(int L, int R){
 }
 void solve(){
 	 // HEAD 배열 초기화 추가!
-    for(int i=0;i<MAX_TABLE;++i){
-        HEAD[i].next=NULL;
-    }
+    // for(int i=0;i<MAX_TABLE;++i){
+    //     HEAD[i].next=NULL;
+    // }
 	int p_cnt=0;
 	int db_cnt=0;
 	scanf("%d",&n);

@@ -5,7 +5,8 @@ import java.io.*;
 public class Main {
     static Scanner sc=new Scanner(System.in);
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-    
+    static int n;
+    static ArrayList<Integer> v;
     public static void Input() throws IOException{
         // n=Integer.parseInt(st.nextToken());
         // m=Integer.parseInt(st.nextToken());
@@ -27,15 +28,16 @@ public class Main {
         // st=new StringTokenizer(br.readLine());
         // t=st.nextToken(); 
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int A,B,C,D,E;
-        A=Integer.parseInt(st.nextToken());
-        B=Integer.parseInt(st.nextToken());
-        C=Integer.parseInt(st.nextToken());
-        D=Integer.parseInt(st.nextToken());
-        E=Integer.parseInt(st.nextToken());
-        
-
+        n=Integer.parseInt(st.nextToken());
+        st=new StringTokenizer(br.readLine());
+        v=new ArrayList<>();
+        for(int i=0;i<n;++i){
+            int a=Integer.parseInt(st.nextToken());
+            v.add(a);
+        }
+        Collections.sort(v);
     }
+
     // static class CntNum implements Comparable<CntNum>{
     //     int cnt;
     //     int num;
@@ -51,46 +53,19 @@ public class Main {
     
 
     static void Solve(){
-        int psum[][]=new int[300+1][300+1];
-        psum[0][0]=board[0][0];
-        // System.out.println();
-        for(int i=0;i<n;++i){
-        for(int j=0;j<m;++j){
-            if(i==0 && j==0) continue;
-            psum[i][j]=board[i][j];
-            if(i>0){
-            psum[i][j]+=psum[i-1][j];
-            }
-            if(j>0){
-            psum[i][j]+=psum[i][j-1];
-            }
-            if(i>0 && j>0){
-            psum[i][j]-=psum[i-1][j-1];
-            }
-            System.out.println(i+" "+j+" "+psum[i][j]);
-        }
-        }
-        for(int i=0;i<k;++i){
-        int sy=arr.get(i).sy;
-        int sx=arr.get(i).sx;
-        int fy=arr.get(i).fy;
-        int fx=arr.get(i).fx;
+        // k번 이상 인용된 논문이 k편 이상이고, n-k편의 논문들의 인용 횟수가 k번 이하라면?
         int ans=0;
-        if(sy==0 && sx==0){
-            ans=psum[fy][fx];
-        }else{
-            if(sy==0 || sx==0){
-            if(sy==0){
-                ans=psum[fy][fx]-psum[fy][sx-1];
-            }else{
-                ans=psum[fy][fx]-psum[sy-1][fx];
-            }
-            }else{
-            ans=psum[fy][fx]-psum[fy][sx-1]-psum[sy-1][fx]+psum[sy-1][sx-1];
+        for(int i=0;i<n;++i){
+            // n-i개 있음 i를 기준으로 본다면
+            int k=n-i;
+            if(i==0 || v.get(i-1)<=k){
+                if(v.get(i)>=k){
+                    ans=Math.max(ans,k);
+                }
+                
             }
         }
         System.out.println(ans);
-        }
     }
 
     public static void main(String[] args) throws IOException{

@@ -5,39 +5,25 @@ import java.io.*;
 public class Main {
     static Scanner sc=new Scanner(System.in);
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static ArrayList<Integer> v=new ArrayList<>();
     static int n;
-    static ArrayList<Integer> v;
     public static void Input() throws IOException{
-        // n=Integer.parseInt(st.nextToken());
-        // m=Integer.parseInt(st.nextToken());
-
-        // // n 줄에 받는 경우
-        // for(int i=0;i<n;++i){
-        //     st=new StringTokenizer(br.readLine());
-        //     arr[i]=Integer.parseInt(st.nextToken());
-        // }
-        // // 1 줄에 n개 받는경우
-        // st=new StringTokenizer(br.readLine());
-        // for(int i=0;i<n;++i){
-        //     arr[i]=Integer.parseInt(st.nextToken());
-        // }
-        // n=Integer.parseInt(st.nextToken());
-        // m=Integer.parseInt(st.nextToken());
-        // st=new StringTokenizer(br.readLine());
-        // s=st.nextToken();
-        // st=new StringTokenizer(br.readLine());
-        // t=st.nextToken(); 
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        st = new StringTokenizer(br.readLine());
         n=Integer.parseInt(st.nextToken());
-        st=new StringTokenizer(br.readLine());
-        v=new ArrayList<>();
+        
         for(int i=0;i<n;++i){
-            int a=Integer.parseInt(st.nextToken());
-            v.add(a);
+            st=new StringTokenizer(br.readLine());
+            String s=st.nextToken();
+            int s_len=s.length();
+            if(s.charAt(s_len-1)=='2'){
+                v.add(2);
+            }else{
+                int c=s.charAt(0)-'0';
+                v.add(c);
+            }
         }
-        Collections.sort(v);
     }
-
     // static class CntNum implements Comparable<CntNum>{
     //     int cnt;
     //     int num;
@@ -47,25 +33,44 @@ public class Main {
     //     }
     //     @Override
     //     public int compareTo(CntNum other){
-    //         return other.cnt-this.cnt;
+    //         return this.cnt-other.cnt;
     //     }
     // }
     
-
+    static class X implements Comparable<X>{
+        int pizza;
+        public X(int pizza){
+            this.pizza=pizza;
+        }
+        @Override
+        public int compareTo(X other){
+            return other.pizza-this.pizza;
+        }
+    }
     static void Solve(){
-        // k번 이상 인용된 논문이 k편 이상이고, n-k편의 논문들의 인용 횟수가 k번 이하라면?
-        int ans=0;
-        for(int i=0;i<n;++i){
-            // n-i개 있음 i를 기준으로 본다면
-            int k=n-i;
-            if(i==0 || v.get(i-1)<=k){
-                if(v.get(i)>=k){
-                    ans=Math.max(ans,k);
+        Collections.sort(v,Collections.reverseOrder());
+        // 3 3 3 3 3 2 2 2 2 1 1 1 1 1
+        // 제일 적게 먹은 피자를 위로 올림
+        // pq에는 남은 피자의 양이 있어야함
+        PriorityQueue<X> pq=new PriorityQueue<>();
+        for(int i=0;i<v.size();++i){
+            if(pq.isEmpty()){
+                X pizza=new X(4-v.get(i));
+                pq.add(pizza);
+            }else{
+                X curPizza=pq.peek();
+                if(curPizza.pizza<v.get(i)){
+                    curPizza=new X(4-v.get(i));
+                    pq.add(curPizza);
+                }else{
+                    pq.poll();
+                    curPizza.pizza-=v.get(i);
+                    pq.add(curPizza);
                 }
-                
             }
         }
-        System.out.println(ans);
+        int ps=pq.size();
+        System.out.println(ps);
     }
 
     public static void main(String[] args) throws IOException{

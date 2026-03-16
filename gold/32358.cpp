@@ -10,24 +10,8 @@ using namespace std;
 
 #define ll long long
 
-vector<pair<int,int>> check[11];
-vector<int> visited(11+1,0);
-int ans=0;
-void dfs(int cur_num, int sum){
-  if(cur_num==11){
-    ans=max(ans,sum);
-    return;
-  }
-  // cur_num번째 열에서 어떤 선수를 선택할지?
-  for(int i=0;i<check[cur_num].size();++i){
-    int next_num=check[cur_num][i].first;
-    int next_val=check[cur_num][i].second;
-    if(visited[next_num]) continue;
-    visited[next_num]=1;
-    dfs(cur_num+1,sum+next_val);
-    visited[next_num]=0;
-  }
-}
+
+
 int main() {
 	ios_base :: sync_with_stdio(false); 
 	cin.tie(NULL); 
@@ -35,33 +19,65 @@ int main() {
 	ll o=1;
 	// cin>>o;
 	while(o--){
-		int t;
-		cin>>t;
-		while(t--){
-			ans=0;
-			visited=vector<int>(11+1,0);
-			for(int i=0;i<11;++i){
-			check[i].clear();
-			}
-			vector<vector<int>> board(11,vector<int>(11,0));
-			for(int i=0;i<11;++i){
-			for(int j=0;j<11;++j){
-				cin>>board[i][j];
-			}
-			}
-			// i번째 선수는 j번째 능력을 가지고 있음
-			// j번째 능력에 대해 모든 포지션을 채웠을 때 값의 최댓값?
-			for(int i=0;i<11;++i){
-			for(int j=0;j<11;++j){
-				if(board[i][j]){
-				// j번째 열은 어떤 숫자들을 가지고 있는지
-				check[j].push_back({i,board[i][j]});
+		ll n;
+		cin>>n;
+		ll ans=0;
+		ll cur_pos=0;
+		vector<ll> tmp;
+		for(ll i=0;i<n;++i){
+			ll a,b;
+			cin>>a;
+			if(a==1){
+				cin>>b;
+				tmp.push_back(b);
+			}else{
+				// 쓰레기 다 수거해야함
+				// 현재 위치 기준으로 가장 가까운 곳부터?
+				if(tmp.empty()) continue;
+				sort(tmp.begin(),tmp.end());
+				ll idx=0;
+				ll diff=2023101800;
+				for(ll j=0;j<tmp.size();++j){
+					ll c=(ll)abs(tmp[j]-cur_pos);
+					if(c<diff){
+						diff=c;
+						idx=j;
+					}
 				}
+				// idx에서 시작
+				ans+=abs(cur_pos-tmp[idx]);
+				cur_pos=tmp[idx];
+				ll L=idx-1;
+				ll R=idx+1;
+				ll ts=tmp.size();
+				while(L>=0 || R<ts){
+					if(L<0){
+						ans+=abs(cur_pos-tmp[R]);
+						cur_pos=tmp[R];
+						++R;
+					}else if(R>=ts){
+						ans+=abs(cur_pos-tmp[L]);
+						cur_pos=tmp[L];
+						--L;
+					}else{
+						ll fst_diff=abs(cur_pos-tmp[L]);
+						ll sed_diff=abs(cur_pos-tmp[R]);
+						if(fst_diff<=sed_diff){
+							ans+=abs(cur_pos-tmp[L]);
+							cur_pos=tmp[L];
+							--L;
+						}else{
+							ans+=abs(cur_pos-tmp[R]);
+							cur_pos=tmp[R];
+							++R;
+						}
+					}
+				}
+
+				tmp.clear();
 			}
 		}
-		dfs(0,0);
-		cout<<ans<<"\n";
-		}
+		cout<<ans;
 	}
 	return 0;
 }

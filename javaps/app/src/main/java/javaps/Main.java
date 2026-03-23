@@ -6,31 +6,8 @@ public class Main {
     static Scanner sc=new Scanner(System.in);
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static int n,m;
-    static char board[][]=new char[2000+1][2000+1];
-    static int cost[][]=new int[2000+1][2000+1];
-    static boolean is_finish[][]=new boolean[2000+1][2000+1];
-    public static void Input() throws IOException{
-        st = new StringTokenizer(br.readLine());
-        n=Integer.parseInt(st.nextToken());
-        m=Integer.parseInt(st.nextToken());
-        for(int i=0;i<n;++i){
-            st = new StringTokenizer(br.readLine());
-            String str=st.nextToken();
-            for(int j=0;j<str.length();++j){
-                is_finish[i][j]=false;
-                board[i][j]=str.charAt(j);
-                // System.out.println(board[i][j]);
-            }
-        }
-        for(int i=0;i<n;++i){
-            st = new StringTokenizer(br.readLine());
-            for(int j=0;j<m;++j){
-                cost[i][j]=Integer.parseInt(st.nextToken());
-            }
-        }
-    }
-    static boolean flag=false;
+    static int N,M,A,B,K;
+    static int board[][]=new int[500+1][500+1];
     static class Pos{
         int y;
         int x;
@@ -39,98 +16,138 @@ public class Main {
             this.x=x;
         }
     }
-    static ArrayList<Pos> v=new ArrayList<>();
-    static ArrayList<Pos> p=new ArrayList<>();
-    static boolean visited[][]=new boolean[2000+1][2000+1];
-    static boolean on_stack[][]=new boolean[2000+1][2000+1];
-    static boolean isRange(int y, int x){
-        return (y>=0 && x>=0 && y<n && x<m);
+    static Pos start_pos;
+    static Pos fin_pos;
+    public static void Input() throws IOException{
+        st = new StringTokenizer(br.readLine());
+        N=Integer.parseInt(st.nextToken());
+        M=Integer.parseInt(st.nextToken());
+        A=Integer.parseInt(st.nextToken());
+        B=Integer.parseInt(st.nextToken());
+        K=Integer.parseInt(st.nextToken());
+        int a,b;
+        for(int i=0;i<K;++i){
+            st = new StringTokenizer(br.readLine());
+            a=Integer.parseInt(st.nextToken());
+            b=Integer.parseInt(st.nextToken());
+            board[a-1][b-1]=1;
+        }
+        st = new StringTokenizer(br.readLine());
+        a=Integer.parseInt(st.nextToken());
+        b=Integer.parseInt(st.nextToken());
+        start_pos=new Pos(a-1,b-1);
+
+        st = new StringTokenizer(br.readLine());
+        a=Integer.parseInt(st.nextToken());
+        b=Integer.parseInt(st.nextToken());
+        fin_pos=new Pos(a-1,b-1);
     }
+    // [y,y+a-1] ~ [x,x+b-1]
+    static int dist[][]=new int[500+1][500+1];
     static int dy[]={-1,0,1,0};
     static int dx[]={0,1,0,-1};
-    // 사이클이 발생하는 좌표만 모아보기?
-    static void dfs(int y, int x){
-        if(is_finish[y][x]){
-            flag=true;
-            return;
-        }
-        if(visited[y][x]){
-            if(on_stack[y][x]){
-                v.add(new Pos(y,x));
-            }
-            return;
-        }
-        
-        visited[y][x]=true;
-        on_stack[y][x]=true;
-        p.add(new Pos(y,x));
-        int d=0;
-        if(board[y][x]=='U'){
-            d=0;
-        }else if(board[y][x]=='R'){
-            d=1;
-        }else if(board[y][x]=='D'){
-            d=2;
-        }else{
-            d=3;
-        }
-        int ny=y+dy[d];
-        int nx=x+dx[d];
-        if(!isRange(ny,nx)){
-            flag=true;
-            on_stack[y][x]=false;
-            return;
-        }
-        dfs(ny,nx);
-        on_stack[y][x]=false;
-    }
-    static boolean check[][]=new boolean[2000+1][2000+1];
-    static int max_num=2023101800;
-    static void r_dfs(int y, int x){
-        if(check[y][x]) return;
-        check[y][x]=true;
-        int d=0;
-        if(board[y][x]=='U'){
-            d=0;
-        }else if(board[y][x]=='R'){
-            d=1;
-        }else if(board[y][x]=='D'){
-            d=2;
-        }else{
-            d=3;
-        }
-        max_num=Math.min(max_num,cost[y][x]);
-        r_dfs(y+dy[d],x+dx[d]);
+    static boolean isRange(int y, int x){
+        return (y>=0 && x>=0 && y<N && x<M);
     }
     static void Solve(){
-        for(int i=0;i<n;++i){
-            for(int j=0;j<m;++j){
-                // i,j에서 출발해서 i,j에 도착하는지?
-                if(visited[i][j]) continue;
-                flag=false;
-                p.clear();
-                dfs(i,j);
-                if(flag==true){
-                    for(int k=0;k<p.size();++k){
-                        int y=p.get(k).y;
-                        int x=p.get(k).x;
-                        is_finish[y][x]=true;
+        for(int i=0;i<N;++i){
+            for(int j=0;j<M;++j){
+                dist[i][j]=2023101800;
+            }
+        }
+        dist[start_pos.y][start_pos.x]=0;
+        Queue<Pos> q=new LinkedList<>();
+        q.add(start_pos);
+        while(!q.isEmpty()){
+            Pos p=q.poll();
+            int y=p.y;
+            int x=p.x;
+            // System.out.println("yx:"+y+" "+x);
+            int ny,nx;
+            int d;
+            // 위로 이동 가능?
+            d=0;
+            ny=y+dy[d];
+            nx=x+dx[d];
+            if(isRange(ny,nx)){
+                int flag=0;
+                for(int i=nx;i<nx+B;++i){
+                    if(!isRange(ny,i) || board[ny][i]==1){
+                        flag=1;
+                        break;
+                    }
+                }
+                if(flag==0){
+                    if(dist[y-1][x]>dist[y][x]+1){
+                        dist[y-1][nx]=dist[y][x]+1;
+                        q.add(new Pos(y-1,x));
+                    }
+                }
+            }
+            // 오른쪽으로 이동 가능?
+            d=1;
+            ny=y+dy[d];
+            nx=x+dx[d]*B;
+            if(isRange(ny,nx)){
+                int flag=0;
+                for(int i=ny;i<ny+A;++i){
+                    if(!isRange(i,nx) || board[i][nx]==1){
+                        flag=1;
+                        break;
+                    }
+                }
+                if(flag==0){
+                    if(dist[y][x+1]>dist[y][x]+1){
+                        dist[y][x+1]=dist[y][x]+1;
+                        q.add(new Pos(y,x+1));
+                    }
+                }
+            }
+            // 아래 이동 가능?
+            d=2;
+            ny=y+dy[d]*A;
+            nx=x+dx[d];
+            if(isRange(ny,nx)){
+                int flag=0;
+                for(int i=nx;i<nx+B;++i){
+                    if(!isRange(ny,i) || board[ny][i]==1){
+                        flag=1;
+                        break;
+                    }
+                }
+                if(flag==0){
+                    if(dist[y+1][x]>dist[y][x]+1){
+                        dist[y+1][x]=dist[y][x]+1;
+                        q.add(new Pos(y+1,x));
+                    }
+                }
+            }
+            // 왼쪽 이동 가능?
+            d=3;
+            ny=y+dy[d];
+            nx=x+dx[d];
+            if(isRange(ny,nx)){
+                int flag=0;
+                for(int i=ny;i<ny+A;++i){
+                    if(!isRange(i,nx) || board[i][nx]==1){
+                        flag=1;
+                        break;
+                    }
+                }
+                if(flag==0){
+                    if(dist[y][x-1]>dist[y][x]+1){
+                        dist[y][x-1]=dist[y][x]+1;
+                        q.add(new Pos(y,x-1));
                     }
                 }
             }
         }
-        
-        int ans=0;
-        for(int i=0;i<v.size();++i){
-            int y=v.get(i).y;
-            int x=v.get(i).x;
-            // System.out.println(y+" "+x);
-            if(check[y][x]) continue;
-            max_num=2023101800;
-            r_dfs(y,x);
-            ans+=max_num;
+        // System.out.println(fin_pos.y+" "+fin_pos.x);
+        if(dist[fin_pos.y][fin_pos.x]==2023101800){
+            System.out.println(-1);
+        }else{
+            System.out.println(dist[fin_pos.y][fin_pos.x]);
         }
-        System.out.print(ans);
     }
 
     public static void main(String[] args) throws IOException{

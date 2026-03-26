@@ -6,66 +6,113 @@ public class Main {
     static Scanner sc=new Scanner(System.in);
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static int H,W,R,C,D;
-    static int board[][][]=new int[2][64][64];
-    static boolean visited[][][]=new boolean[2][64][64];
-    static int check[][]=new int[64][64];
-    static boolean isRange(int y, int x){
-        return (y>=0 && x>=0 && y<H && x<W);
-    }
-    static int dy[]={-1,0,1,0};
-    static int dx[]={0,1,0,-1};
-    static int ans=0;
+    static int N,K;
+    static ArrayList<Integer> v=new ArrayList<>();
+    static int diff[]=new int[100000+1];
+    static int psum[]=new int[100000+1];
+    static HashMap<Integer,Long> check=new HashMap<>();
+    static long ans=0;
     public static void Input() throws IOException{
         st = new StringTokenizer(br.readLine());
-        H=Integer.parseInt(st.nextToken());
-        W=Integer.parseInt(st.nextToken());
+        N=Integer.parseInt(st.nextToken());
+        K=Integer.parseInt(st.nextToken());
         st = new StringTokenizer(br.readLine());
-        R=Integer.parseInt(st.nextToken());
-        C=Integer.parseInt(st.nextToken());
-        D=Integer.parseInt(st.nextToken());
-        for(int i=0;i<H;++i){
-            st = new StringTokenizer(br.readLine());
-            String s=st.nextToken();
-            for(int j=0;j<W;++j){
-                board[0][i][j]=s.charAt(j);
-                check[i][j]=1;
-            }
-        }
-        for(int i=0;i<H;++i){
-            st = new StringTokenizer(br.readLine());
-            String s=st.nextToken();
-            for(int j=0;j<W;++j){
-                board[1][i][j]=s.charAt(j);
-            }
+        for(int i=0;i<N;++i){
+            int a=Integer.parseInt(st.nextToken());
+            v.add(a);
+            check.put(a,1L);
         }
     }
-    // 지금부터 위의 과정을 반복해도 더이상 지울 수 없다면??
-    // 그 조건이 언제인지??
-    
-    static void Solve(){
-        int cnt=0;
-        while(true){
-            // 1. 시뮬레이션
-            if(check[R][C]==1){
-                check[R][C]=0;
-                D+=board[0][R][C];
-                D%=4;
-                cnt=0;
+    static long getDist(int pos){
+        // pos위치에서 모든 샘터까지의 합?
+        long cur_dist=2023101800L;
+        // 1. pos보다 작은 최대의 위치
+        int L,R,max_idx,min_idx;
+        L=0; R=N-1;
+        max_idx=-1;
+        while(L<=R){
+            int mid=(L+R)/2;
+            if(v.get(mid)<pos){
+                max_idx=Math.max(max_idx,mid);
+                L=mid+1;
             }else{
-                D+=board[1][R][C];
-                D%=4;
-                ++cnt;
+                R=mid-1;
             }
-            R+=dy[D];
-            C+=dx[D];
-            ++ans;
-            // 2. 언제 종료해야?
-            if(cnt>H*W*4 || !isRange(R,C)){
-                ans-=cnt;
-                break;
+        }
+        if(max_idx!=-1){
+            cur_dist=pos-v.get(max_idx);
+        }
+        L=0; R=N-1;
+        min_idx=N;
+        while(L<=R){
+            int mid=(L+R)/2;
+            if(v.get(mid)>pos){
+                min_idx=Math.min(min_idx,mid);
+                R=mid-1;
+            }else{
+                L=mid+1;
+            }
+        }
+        if(min_idx!=N){
+            cur_dist=Math.min(cur_dist,v.get(min_idx)-pos);
+        }
+        return cur_dist;
+    }
+    
+    static class ValPos implements Comparable<ValPos>{
+        Long val;
+        int pos;
+        public ValPos(Long val, int pos){
+            this.val=val;
+            this.pos=pos;
+        }
+        @Override
+        public int compareTo(ValPos other){
+            return Long.compare(this.val,other.val);
+        }
+    }
+    static void Solve(){
+        Collections.sort(v);
+        for(int i=1;i<N;++i){
+            diff[i]=v.get(i)-v.get(i-1);
+            psum[i]=psum[i-1]+diff[i];
+        }
+        // System.out.println(3+" "+getDist(3));
+        // for(int i=-6;i<=7;++i){
+        //     System.out.println(i+" "+getDist(i));
+        // }
+        int cnt=K;
+        PriorityQueue<ValPos> pq=new PriorityQueue<>();
+        for(int i=0;i<N;++i){
+            int fst_pos=v.get(i)-1;
+            int sed_pos=v.get(i)+1;
+            if(!check.containsKey(fst_pos)){
+                check.put(fst_pos,getDist(fst_pos));
+                pq.add(new ValPos(getDist(fst_pos),fst_pos));
+            }
+            if(!check.containsKey(sed_pos)){
+                check.put(sed_pos,getDist(sed_pos));
+                pq.add(new ValPos(getDist(sed_pos),sed_pos));
             }
 
+        }
+        while(!pq.isEmpty() && cnt>0){
+            ValPos vp=pq.poll();
+            long cur_val=vp.val;
+            int cur_pos=vp.pos;
+            --cnt;
+            // System.out.println(cur_val+" "+cur_pos+" "+cnt);
+            ans+=cur_val;
+            int fst_pos=cur_pos-1;
+            int sed_pos=cur_pos+1;
+            if(!check.containsKey(fst_pos)){
+                check.put(fst_pos,getDist(fst_pos));
+                pq.add(new ValPos(getDist(fst_pos),fst_pos));
+            }
+            if(!check.containsKey(sed_pos)){
+                check.put(sed_pos,getDist(sed_pos));
+                pq.add(new ValPos(getDist(sed_pos),sed_pos));
+            }
         }
         System.out.println(ans);
     }

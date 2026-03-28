@@ -6,90 +6,107 @@ public class Main {
     static Scanner sc=new Scanner(System.in);
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static int N,P;
-    static ArrayList<Integer> v=new ArrayList<>();
-    static class Val implements Comparable<Val>{
+    static int T;
+    static int N;
+    static class Pos implements Comparable<Pos>{
+        int x;
+        int y;
+        public Pos(int x, int y){
+            this.x=x;
+            this.y=y;
+        }
+        @Override
+        public int compareTo(Pos other){
+            return this.x-other.x;
+        }
+    }
+    static ArrayList<Pos> v=new ArrayList<>();
+    public static void Input() throws IOException{
+        st = new StringTokenizer(br.readLine());
+        T=Integer.parseInt(st.nextToken());
+        while(T>0){
+            st = new StringTokenizer(br.readLine());
+            int S=Integer.parseInt(st.nextToken());
+            st = new StringTokenizer(br.readLine());
+            v.clear();
+            Pos p=new Pos(0,0);
+            for(int i=0;i<S*2;++i){
+                int a=Integer.parseInt(st.nextToken());
+                // System.out.println(a);
+                if(i%2==0){
+                    p=new Pos(0,0);
+                    p.x=a;
+                }else{
+                    p.y=a;
+                    v.add(p);
+                    // System.out.println(p.x+" "+p.y);
+                }
+            }
+            // for(int i=0;i<v.size();++i){
+            //     System.out.println(v.get(i).x+" "+v.get(i).y);
+            // }
+            Solve();
+            --T;
+        }   
+    }
+    static class Y implements Comparable<Y>{
         int val;
-        public Val(int val){
+        public Y(int val){
             this.val=val;
         }
         @Override
-        public int compareTo(Val other){
-            return this.val-other.val;
+        public int compareTo(Y other){
+            return other.val-this.val;
         }
     }
-    static PriorityQueue<Val> pq=new PriorityQueue<>();
-    static int sum=0;
-    public static void Input() throws IOException{
-        st = new StringTokenizer(br.readLine());
-        N=Integer.parseInt(st.nextToken());
-        P=Integer.parseInt(st.nextToken());
-        st = new StringTokenizer(br.readLine());
-        for(int i=0;i<N;++i){
-            int a;
-            a=Integer.parseInt(st.nextToken());
-            v.add(a);
+    public static void Solve(){
+        // v에 원소들이 담겼음
+        Collections.sort(v);
+        ArrayList<Integer> arr=new ArrayList<>();
+        for(int i=0;i<v.size();++i){
+            arr.add(v.get(i).y);
+            // System.out.println(v.get(i).x+" "+v.get(i).y);
         }
-    }
-    static ArrayList<Integer> ans=new ArrayList<>();
-    static void Solve(){
-        int idx=-1;
-        int flag=0;
-        for(int i=0;i<N;++i){
-            int a=v.get(i);
-            idx=i;
-            if(sum+a<P){
-                sum+=a;
-                pq.add(new Val(a));
-                ans.add(-1);
+        // for(int i=0;i<v.size();++i){
+        //     System.out.print(arr.get(i)+" ");
+        // }System.out.println();
+        int ans=0;
+        PriorityQueue<Y> pq=new PriorityQueue<>();
+        PriorityQueue<Y> tmp=new PriorityQueue<>();
+        for(int i=0;i<arr.size();++i){
+            int cur_num=arr.get(i);
+            if(pq.isEmpty()){
+                pq.add(new Y(cur_num));
             }else{
-                flag=1;
-                break;
-            }
-            
-        }
-        if(flag==0){
-            for(int i=0;i<N;++i){
-                ans.add(-1);
-            }
-        }else{
-            for(int i=idx;i<N;++i){
-                int min_num=-1;
-                if(!pq.isEmpty()){
-                    min_num=pq.peek().val;
-                }
-                if(min_num>=v.get(i) && sum>=P){
-                    int ps=pq.size();
-                    ans.add(ps);
-                }else{
-                    // min_num<pq.top()
-                    while(!pq.isEmpty()){
-                        min_num=pq.peek().val;
-                        if((sum-min_num+v.get(i))>=P){
-                            pq.poll();
-                            sum-=min_num;
-                        }else{
-                            break;
-                        }
+                // pq에 cur_num보다 작은 값이 top에 있을 때까지 empty
+                while(!pq.isEmpty()){
+                    Y cur_top=pq.peek();
+                    if(cur_top.val<=cur_num){
+                        pq.poll();
+                        break;
+                    }else{
+                        pq.poll();
+                        tmp.add(cur_top);
                     }
-                    pq.add(new Val(v.get(i)));
-                    sum+=v.get(i);
-                    int ps=pq.size();
-                    ans.add(ps);
                 }
+                pq.add(new Y(cur_num));
+                while(!tmp.isEmpty()){
+                    Y tmp_top=tmp.poll();
+                    pq.add(tmp_top);
+                }
+
+            }
+            if(!pq.isEmpty()){
+                int ps=pq.size();
+                ans=Math.max(ans,ps);
             }
         }
-        for(int i=0;i<N;++i){
-            System.out.print(ans.get(i));
-            if(i!=N-1){
-                System.out.print(" ");
-            }
-        }
+        System.out.println(ans);
     }
 
     public static void main(String[] args) throws IOException{
         Input();
-        Solve();
+        // Solve();
     }
 }
 

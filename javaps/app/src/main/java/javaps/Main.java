@@ -6,111 +6,124 @@ public class Main {
     static Scanner sc=new Scanner(System.in);
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static int T;
-    static int N;
-    static class Pos implements Comparable<Pos>{
-        int x;
-        int y;
-        public Pos(int x, int y){
-            this.x=x;
-            this.y=y;
-        }
-        @Override
-        public int compareTo(Pos other){
-            return this.x-other.x;
-        }
-    }
-    static ArrayList<Pos> v=new ArrayList<>();
-    static int check[]=new int[15000+1];
+    static int N,M;
+    static ArrayList<ArrayList<Integer>> v=new ArrayList<ArrayList<Integer>>();
+    static ArrayList<ArrayList<Integer>> rv=new ArrayList<ArrayList<Integer>>();
+    static int dist[][]=new int[1000+1][1000+1];
+    static int dp[][]=new int[1000+1][1000+1];
+    static int check[]=new int[1000+1];
+    static ArrayList<Integer> arr=new ArrayList<>();
     public static void Input() throws IOException{
         st = new StringTokenizer(br.readLine());
-        T=Integer.parseInt(st.nextToken());
-        while(T>0){
-            st = new StringTokenizer(br.readLine());
-            int S=Integer.parseInt(st.nextToken());
-            st = new StringTokenizer(br.readLine());
-            v.clear();
-            for(int i=0;i<=15000;++i){
-                check[i]=-1;
+        N=Integer.parseInt(st.nextToken());
+        st = new StringTokenizer(br.readLine());
+        M=Integer.parseInt(st.nextToken());
+        for(int i=0;i<=N;++i){
+            ArrayList<Integer> tmp=new ArrayList<>();
+            v.add(tmp);
+            rv.add(new ArrayList<Integer>());
+            for(int j=0;j<=N;++j){
+                dp[i][j]=-1;
             }
-            Pos p=new Pos(0,0);
-            for(int i=0;i<S*2;++i){
-                int a=Integer.parseInt(st.nextToken());
-                // System.out.println(a);
-                if(i%2==0){
-                    p=new Pos(0,0);
-                    p.x=a;
-                }else{
-                    p.y=a;
-                    v.add(p);
-                    // System.out.println(p.x+" "+p.y);
-                }
-            }
-            // for(int i=0;i<v.size();++i){
-            //     System.out.println(v.get(i).x+" "+v.get(i).y);
-            // }
-            Solve();
-            --T;
-        }   
-    }
-    static class Y implements Comparable<Y>{
-        int val;
-        public Y(int val){
-            this.val=val;
         }
-        @Override
-        public int compareTo(Y other){
-            return other.val-this.val;
+        for(int i=0;i<M;++i){
+            st = new StringTokenizer(br.readLine());
+            int a,b,c;
+            a=Integer.parseInt(st.nextToken());
+            b=Integer.parseInt(st.nextToken());
+            if(a!=1){
+                ++check[b];
+            }
+            c=Integer.parseInt(st.nextToken());
+            if(b==1){
+                arr.add(a);
+            }
+            dist[a][b]=c;
+            v.get(a).add(b);
+            rv.get(b).add(a);
         }
     }
+    
     public static void Solve(){
-        // v에 원소들이 담겼음
-        Collections.sort(v);
-        ArrayList<Integer> arr=new ArrayList<>();
-        for(int i=0;i<v.size();++i){
-            arr.add(v.get(i).y);
-            // System.out.println(v.get(i).x+" "+v.get(i).y);
+        Queue<Integer> q=new LinkedList<>();
+        dp[1][1]=0;
+        for(int i=2;i<=N;++i){
+            if(check[i]==0){
+                q.add(i);
+                dp[i][2]=dist[1][i];
+            }
         }
-        int L=5000, R=5000;
+        
+        while(!q.isEmpty()){
+            int cur_num=q.poll();
+            for(int i=0;i<v.get(cur_num).size();++i){
+                int next_num=v.get(cur_num).get(i);
+                if(next_num==1) continue;
+                --check[next_num];
+                for(int j=2;j<N;++j){
+                    if(dp[cur_num][j]==-1) continue;
+                    if(dp[next_num][j+1]<dp[cur_num][j]+dist[cur_num][next_num]){
+                        dp[next_num][j+1]=dp[cur_num][j]+dist[cur_num][next_num];
+                    }
+                }
+                if(check[next_num]==0){
+                    q.add(next_num);
+                }
+                
+            }
+        }
         int ans=0;
         for(int i=0;i<arr.size();++i){
-            int cur_num=arr.get(i);
-            if(L==R){
-                check[R]=cur_num;
-                ++R;
-            }else{
-                if(cur_num<check[L]){
-                    check[L-1]=cur_num;
-                    --L;
-                }else{
-                    int l=L;
-                    int r=R-1;
-                    int max_idx=-1;
-                    while(l<=r){
-                        int mid=(l+r)/2;
-                        if(check[mid]<=cur_num){
-                            max_idx=Math.max(max_idx,mid);
-                            l=mid+1;
-                        }else{
-                            r=mid-1;
-                        }
-                    }
-                    if(max_idx==-1){
-                        check[R]=cur_num;
-                        ++R;
-                    }else{
-                        check[max_idx]=cur_num;
-                    }
+            int last_num=arr.get(i);
+            for(int j=2;j<=N;++j){
+                if(dp[last_num][j]==-1) continue;
+                ans=Math.max(ans,dp[last_num][j]+dist[last_num][1]);
+            }
+        }
+        System.out.println(ans);
+        ArrayList<Integer> ans_vec=new ArrayList<>();
+        int ans_cnt=0;
+
+        for(int i=0;i<arr.size();++i){
+            if(!ans_vec.isEmpty()) break;
+            int last_num=arr.get(i);
+            for(int j=2;j<=N;++j){
+                if(!ans_vec.isEmpty()) break;
+                if(dp[last_num][j]==-1) continue;
+                if(ans==dp[last_num][j]+dist[last_num][1]){
+                    ans_vec.add(1);
+                    ans_cnt=j;
+                    ans_vec.add(last_num);
+                    ans-=dist[last_num][1];
                 }
             }
         }
-        ans=R-L;
-        System.out.println(ans);
+        // System.out.println(ans+" "+ans_cnt);
+        // // ans_vec에는 1,last_num들어있음
+        // 현재 ans_cnt
+        while(true){
+            int as=ans_vec.size();
+            int cur_last_num=ans_vec.get(as-1);
+            // System.out.println(cur_last_num);
+            if(cur_last_num==1) break;
+            for(int i=0;i<rv.get(cur_last_num).size();++i){
+                int next_num=rv.get(cur_last_num).get(i);
+                if(dp[next_num][ans_cnt-1]+dist[next_num][cur_last_num]==dp[cur_last_num][ans_cnt]){
+                    ans_vec.add(next_num);
+                    ans_cnt-=1;
+                    break;
+                }
+            }
+        }
+        Collections.reverse(ans_vec);
+        for(int i=0;i<ans_vec.size();++i){
+            System.out.print(ans_vec.get(i)+" ");
+        }
     }
 
     public static void main(String[] args) throws IOException{
         Input();
-        // Solve();
+        Solve();
     }
 }
 

@@ -21,6 +21,7 @@ public class Main {
         }
     }
     static ArrayList<Pos> v=new ArrayList<>();
+    static int check[]=new int[15000+1];
     public static void Input() throws IOException{
         st = new StringTokenizer(br.readLine());
         T=Integer.parseInt(st.nextToken());
@@ -29,6 +30,9 @@ public class Main {
             int S=Integer.parseInt(st.nextToken());
             st = new StringTokenizer(br.readLine());
             v.clear();
+            for(int i=0;i<=15000;++i){
+                check[i]=-1;
+            }
             Pos p=new Pos(0,0);
             for(int i=0;i<S*2;++i){
                 int a=Integer.parseInt(st.nextToken());
@@ -67,40 +71,40 @@ public class Main {
             arr.add(v.get(i).y);
             // System.out.println(v.get(i).x+" "+v.get(i).y);
         }
-        // for(int i=0;i<v.size();++i){
-        //     System.out.print(arr.get(i)+" ");
-        // }System.out.println();
+        int L=5000, R=5000;
         int ans=0;
-        PriorityQueue<Y> pq=new PriorityQueue<>();
-        PriorityQueue<Y> tmp=new PriorityQueue<>();
         for(int i=0;i<arr.size();++i){
             int cur_num=arr.get(i);
-            if(pq.isEmpty()){
-                pq.add(new Y(cur_num));
+            if(L==R){
+                check[R]=cur_num;
+                ++R;
             }else{
-                // pq에 cur_num보다 작은 값이 top에 있을 때까지 empty
-                while(!pq.isEmpty()){
-                    Y cur_top=pq.peek();
-                    if(cur_top.val<=cur_num){
-                        pq.poll();
-                        break;
+                if(cur_num<check[L]){
+                    check[L-1]=cur_num;
+                    --L;
+                }else{
+                    int l=L;
+                    int r=R-1;
+                    int max_idx=-1;
+                    while(l<=r){
+                        int mid=(l+r)/2;
+                        if(check[mid]<=cur_num){
+                            max_idx=Math.max(max_idx,mid);
+                            l=mid+1;
+                        }else{
+                            r=mid-1;
+                        }
+                    }
+                    if(max_idx==-1){
+                        check[R]=cur_num;
+                        ++R;
                     }else{
-                        pq.poll();
-                        tmp.add(cur_top);
+                        check[max_idx]=cur_num;
                     }
                 }
-                pq.add(new Y(cur_num));
-                while(!tmp.isEmpty()){
-                    Y tmp_top=tmp.poll();
-                    pq.add(tmp_top);
-                }
-
-            }
-            if(!pq.isEmpty()){
-                int ps=pq.size();
-                ans=Math.max(ans,ps);
             }
         }
+        ans=R-L;
         System.out.println(ans);
     }
 

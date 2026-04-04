@@ -6,110 +6,86 @@ public class Main {
     static Scanner sc=new Scanner(System.in);
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-    static String A,B,C;
-    static int check[]=new int[26];
-    static int visited[]=new int[10];
-    static ArrayList<Integer> tmp=new ArrayList<>();
+    static int N,M,K;
+    static int board[][]=new int[1000+1][1000+1];
+    static int dist[][]=new int[1000+1][1000+1];
+    static int dy[]={-1,0,1,0};
+    static int dx[]={0,1,0,-1};
+    static boolean isRange(int y, int x){
+        return (y>=0 && x>=0 && y<N && x<M);
+    }
+    static class Pos implements Comparable<Pos>{
+        int d;
+        int y;
+        int x;
+        public Pos(int d, int y, int x){
+            this.d=d;
+            this.y=y;
+            this.x=x;
+        }
+        @Override
+        public int compareTo(Pos other){
+            return this.d-other.d;
+        }
+    }
     public static void Input() throws IOException{
         st = new StringTokenizer(br.readLine());
-        A=st.nextToken();
-        B=st.nextToken();
-        C=st.nextToken();
-    }
-    static ArrayList<Character> v=new ArrayList<>();
-    static int finish=0;
-    static int m[]=new int[26];
-    // v의 i번째 문자는, tmp의 i번째 값과 매칭됨
-    static void dfs(int idx){
-        if(finish==1) return;
-        // tmp의 idx번째 인덱스에 어떤 값을 넣을 것인지??
-        int vs=v.size();
-        if(idx==vs){
-            // 연산 가능한지??
-            int as=A.length();
-            int bs=B.length();
-            int cs=C.length();
-            for(int i=0;i<v.size();++i){
-                char c=v.get(i);
-                m[c-'A']=tmp.get(i);
+        N=Integer.parseInt(st.nextToken());
+        M=Integer.parseInt(st.nextToken());
+        K=Integer.parseInt(st.nextToken());
+        for(int i=0;i<N;++i){
+            st = new StringTokenizer(br.readLine());
+            for(int j=0;j<M;++j){
+                int a=Integer.parseInt(st.nextToken());
+                board[i][j]=a;
+                dist[i][j]=2023101800;
             }
-            long fs=0, ss=0, ts=0;
-            for(int i=0;i<as;++i){
-                fs*=10;
-                fs+=m[A.charAt(i)-'A'];
-            }
-            for(int i=0;i<bs;++i){
-                ss*=10;
-                ss+=m[B.charAt(i)-'A'];
-            }
-            for(int i=0;i<cs;++i){
-                ts*=10;
-                ts+=m[C.charAt(i)-'A'];
-            }
-            if((fs+ss)==ts){
-                finish=1;
-            }
-            return;
-        }
-        for(int i=0;i<10;++i){
-            if(visited[i]==1) continue;
-            visited[i]=1;
-            tmp.add(i);
-            int ts=tmp.size();
-            dfs(idx+1);
-            tmp.remove(ts-1);
-            visited[i]=0;
         }
     }
     
     public static void Solve(){
-        String fst_tmp=new String("");
-        int as=A.length();
-        for(int i=as-1;i>=0;--i){
-            fst_tmp+=A.charAt(i);
-            ++check[A.charAt(i)-'A'];
+        PriorityQueue<Pos> q=new PriorityQueue<>();
+        for(int i=0;i<N;++i){
+            q.add(new Pos(board[i][0],i,0));
+            dist[i][0]=board[i][0];
         }
-        // A=new String(fst_tmp);
-        
-        String sed_tmp=new String("");
-        int bs=B.length();
-        for(int i=bs-1;i>=0;--i){
-            sed_tmp+=B.charAt(i);
-            ++check[B.charAt(i)-'A'];
+        for(int i=0;i<M;++i){
+            q.add(new Pos(board[0][i],0,i));
+            dist[0][i]=board[0][i];
         }
-        // B=new String(sed_tmp);
-
-        String trd_tmp=new String("");
-        int cs=C.length();
-        for(int i=cs-1;i>=0;--i){
-            trd_tmp+=C.charAt(i);
-            ++check[C.charAt(i)-'A'];
+        for(int i=0;i<N;++i){
+            q.add(new Pos(board[i][M-1],i,M-1));
+            dist[i][M-1]=board[i][M-1];
         }
-        // C=new String(trd_tmp);
-        int cnt=0;
-        for(int i=0;i<26;++i){
-            if(check[i]>0){
-                ++cnt;
+        while(!q.isEmpty()){
+            Pos p=q.poll();
+            int d=p.d;
+            int y=p.y;
+            int x=p.x;
+            for(int i=0;i<4;++i){
+                int ny=y+dy[i];
+                int nx=x+dx[i];
+                if(!isRange(ny,nx)) continue;
+                if(dist[ny][nx]>dist[y][x]){
+                    dist[ny][nx]=Math.max(board[ny][nx],dist[y][x]);
+                    q.add(new Pos(dist[ny][nx],ny,nx));
+                }
             }
         }
-        if(cnt>10){
-            System.out.print("NO");
-            return;
-        }
-        for(int i=0;i<26;++i){
-            if(check[i]>0){
-                char c='A';
-                c+=i;
-                v.add(c);
+        // for(int i=0;i<N;++i){
+        //     for(int j=0;j<M;++j){
+        //         System.out.print(dist[i][j]+" ");
+        //     }System.out.println();
+        // }
+        ArrayList<Integer> v=new ArrayList<>();
+        for(int i=0;i<N;++i){
+            for(int j=0;j<M;++j){
+                v.add(dist[i][j]);
             }
         }
-        // v에 있는 수들을 0~9 중에서 분배하기
-        dfs(0);
-        if(finish==1){
-            System.out.print("YES");
-        }else{
-            System.out.print("NO");
-        }
+        Collections.sort(v);
+        int ans=v.get(K-1);
+        System.out.println(ans);
     }
 
 
